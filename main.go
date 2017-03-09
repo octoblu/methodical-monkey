@@ -8,6 +8,8 @@ import (
 	"syscall"
 	"time"
 
+	mgo "gopkg.in/mgo.v2"
+
 	"github.com/aws/aws-sdk-go/aws"
 	"github.com/aws/aws-sdk-go/aws/session"
 	"github.com/aws/aws-sdk-go/service/ec2"
@@ -31,6 +33,8 @@ func main() {
 
 func run(context *cli.Context) {
 	svc := connectEC2()
+	db := connectMongo("mongodb://localhost:27017", "methodical-monkey")
+	monkeyClient := monkey.NewMonkeyClient(db)
 	sigTerm := make(chan os.Signal)
 	signal.Notify(sigTerm, syscall.SIGTERM)
 
@@ -53,7 +57,7 @@ func run(context *cli.Context) {
 		if err != nil {
 			panic(err)
 		}
-		monkey.ProcessServers(list)
+		monkeyClient.Process(list)
 		time.Sleep(60 * time.Second)
 	}
 }
@@ -65,6 +69,14 @@ func connectEC2() *ec2.EC2 {
 	}
 	svc := ec2.New(sess, &aws.Config{Region: aws.String("us-west-2")})
 	return svc
+}
+
+func connectMongo(url, db string) *mgo.Database {
+	session, err := mgo.Dial(url)
+	if err != nil {
+		panic(err)
+	}
+	return session.DB(db)
 }
 
 func version() string {

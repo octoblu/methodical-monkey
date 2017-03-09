@@ -16,6 +16,19 @@ func NewServer(instance *ec2.Instance) *Server {
 	return &Server{instance: instance}
 }
 
+// String should return the JSON stringified version of the instance
 func (server *Server) String() string {
 	return fmt.Sprintf("%v", server.instance.GoString())
+}
+
+// GetName should return the instance name
+func (server *Server) GetName() string {
+	name := ""
+	for _, tag := range server.instance.Tags {
+		key := *tag.Key
+		if key == "Name" {
+			name = *tag.Value
+		}
+	}
+	return fmt.Sprint(name)
 }
