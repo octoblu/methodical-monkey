@@ -8,9 +8,13 @@ import (
 	"syscall"
 	"time"
 
-	"github.com/urfave/cli"
+	"github.com/aws/aws-sdk-go/aws"
+	"github.com/aws/aws-sdk-go/aws/session"
+	"github.com/aws/aws-sdk-go/service/ec2"
 	"github.com/coreos/go-semver/semver"
-	"github.com/fatih/color"
+	"github.com/octoblu/methodical-monkey/monkey"
+	"github.com/octoblu/methodical-monkey/servers"
+	"github.com/urfave/cli"
 	De "github.com/visionmedia/go-debug"
 )
 
@@ -21,19 +25,12 @@ func main() {
 	app.Name = "methodical-monkey"
 	app.Version = version()
 	app.Action = run
-	app.Flags = []cli.Flag{
-		cli.StringFlag{
-			Name:   "example, e",
-			EnvVar: "METHODICAL_MONKEY_EXAMPLE",
-			Usage:  "Example string flag",
-		},
-	}
+	app.Flags = []cli.Flag{}
 	app.Run(os.Args)
 }
 
 func run(context *cli.Context) {
-	example := getOpts(context)
-
+	svc := connectEC2()
 	sigTerm := make(chan os.Signal)
 	signal.Notify(sigTerm, syscall.SIGTERM)
 
@@ -51,24 +48,23 @@ func run(context *cli.Context) {
 			os.Exit(0)
 		}
 
-		debug("methodical-monkey.loop: %v", example)
-		time.Sleep(1 * time.Second)
+		debug("methodical-monkey.loop")
+		list, err := servers.List(svc)
+		if err != nil {
+			panic(err)
+		}
+		monkey.ProcessServers(list)
+		time.Sleep(60 * time.Second)
 	}
 }
 
-func getOpts(context *cli.Context) string {
-	example := context.String("example")
-
-	if example == "" {
-		cli.ShowAppHelp(context)
-
-		if example == "" {
-			color.Red("  Missing required flag --example or METHODICAL_MONKEY_EXAMPLE")
-		}
-		os.Exit(1)
+func connectEC2() *ec2.EC2 {
+	sess, err := session.NewSession()
+	if err != nil {
+		panic(err)
 	}
-
-	return example
+	svc := ec2.New(sess, &aws.Config{Region: aws.String("us-west-2")})
+	return svc
 }
 
 func version() string {

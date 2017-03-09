@@ -18,6 +18,14 @@
 			"notests": true
 		},
 		{
+			"importpath": "github.com/aws/aws-sdk-go",
+			"repository": "https://github.com/aws/aws-sdk-go",
+			"vcs": "git",
+			"revision": "37f127c188d13d8cbdd1abc6969ab33a79ecaa38",
+			"branch": "master",
+			"notests": true
+		},
+		{
 			"importpath": "github.com/coreos/go-semver/semver",
 			"repository": "https://github.com/coreos/go-semver",
 			"vcs": "git",
@@ -31,6 +39,22 @@
 			"repository": "https://github.com/fatih/color",
 			"vcs": "git",
 			"revision": "9131ab34cf20d2f6d83fdc67168a5430d1c7dc23",
+			"branch": "master",
+			"notests": true
+		},
+		{
+			"importpath": "github.com/go-ini/ini",
+			"repository": "https://github.com/go-ini/ini",
+			"vcs": "git",
+			"revision": "c437d20015c2ab6454b7a66a13109ff0fb99e17a",
+			"branch": "master",
+			"notests": true
+		},
+		{
+			"importpath": "github.com/jmespath/go-jmespath",
+			"repository": "https://github.com/jmespath/go-jmespath",
+			"vcs": "git",
+			"revision": "bd40a432e4c76585ef6b72d3fd96fb9b6dc7b68d",
 			"branch": "master",
 			"notests": true
 		},
@@ -64,6 +88,24 @@
 			"vcs": "git",
 			"revision": "ff4a55a20a86994118644bbddc6a216da193cc13",
 			"branch": "master",
+			"notests": true
+		},
+		{
+			"importpath": "golang.org/x/tools/go/ast/astutil",
+			"repository": "https://go.googlesource.com/tools",
+			"vcs": "git",
+			"revision": "f60b69ed8cd7a29e91f87050ae23a29581a0f367",
+			"branch": "master",
+			"path": "/go/ast/astutil",
+			"notests": true
+		},
+		{
+			"importpath": "golang.org/x/tools/go/buildutil",
+			"repository": "https://go.googlesource.com/tools",
+			"vcs": "git",
+			"revision": "f60b69ed8cd7a29e91f87050ae23a29581a0f367",
+			"branch": "master",
+			"path": "/go/buildutil",
 			"notests": true
 		},
 		{
