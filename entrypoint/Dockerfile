@@ -1,5 +1,5 @@
-FROM scratch
+FROM centurylink/ca-certs
 MAINTAINER Octoblu, Inc. <docker@octoblu.com>
 
-ADD methodical-monkey methodical-monkey
+COPY methodical-monkey methodical-monkey
 ENTRYPOINT ["./methodical-monkey"]
