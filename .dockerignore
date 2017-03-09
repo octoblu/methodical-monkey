@@ -1,0 +1,8 @@
+.git
+methodical-monkey
+entrypoint/methodical-monkey
+go-methodical-monkey
+entrypoint/go-methodical-monkey
+build.sh
+cross-compile.sh
+README.md

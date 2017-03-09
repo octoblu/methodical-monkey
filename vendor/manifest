@@ -1,0 +1,86 @@
+{
+	"version": 0,
+	"dependencies": [
+		{
+			"importpath": "github.com/BurntSushi/toml",
+			"repository": "https://github.com/BurntSushi/toml",
+			"vcs": "git",
+			"revision": "e643e9ef00b049d75de26e61109c5ea01885cd21",
+			"branch": "master",
+			"notests": true
+		},
+		{
+			"importpath": "github.com/acsellers/inflections",
+			"repository": "https://github.com/acsellers/inflections",
+			"vcs": "git",
+			"revision": "cb98bfe9e3ee28e8649778f5fbb2e95f54f71b39",
+			"branch": "master",
+			"notests": true
+		},
+		{
+			"importpath": "github.com/coreos/go-semver/semver",
+			"repository": "https://github.com/coreos/go-semver",
+			"vcs": "git",
+			"revision": "5e3acbb5668c4c3deb4842615c4098eb61fb6b1e",
+			"branch": "master",
+			"path": "/semver",
+			"notests": true
+		},
+		{
+			"importpath": "github.com/fatih/color",
+			"repository": "https://github.com/fatih/color",
+			"vcs": "git",
+			"revision": "9131ab34cf20d2f6d83fdc67168a5430d1c7dc23",
+			"branch": "master",
+			"notests": true
+		},
+		{
+			"importpath": "github.com/mattn/go-colorable",
+			"repository": "https://github.com/mattn/go-colorable",
+			"vcs": "git",
+			"revision": "acb9493f2794fd0f820de7a27a217dafbb1b65ea",
+			"branch": "master",
+			"notests": true
+		},
+		{
+			"importpath": "github.com/mattn/go-isatty",
+			"repository": "https://github.com/mattn/go-isatty",
+			"vcs": "git",
+			"revision": "57fdcb988a5c543893cc61bce354a6e24ab70022",
+			"branch": "master",
+			"notests": true
+		},
+		{
+			"importpath": "github.com/urfave/cli",
+			"repository": "https://github.com/urfave/cli",
+			"vcs": "git",
+			"revision": "9e5b04886c4bfee2ceba1465b8121057355c4e53",
+			"branch": "master",
+			"notests": true
+		},
+		{
+			"importpath": "github.com/visionmedia/go-debug",
+			"repository": "https://github.com/visionmedia/go-debug",
+			"vcs": "git",
+			"revision": "ff4a55a20a86994118644bbddc6a216da193cc13",
+			"branch": "master",
+			"notests": true
+		},
+		{
+			"importpath": "gopkg.in/urfave/cli.v1",
+			"repository": "https://gopkg.in/urfave/cli.v1",
+			"vcs": "git",
+			"revision": "0bdeddeeb0f650497d603c4ad7b20cfe685682f6",
+			"branch": "master",
+			"notests": true
+		},
+		{
+			"importpath": "gopkg.in/yaml.v2",
+			"repository": "https://gopkg.in/yaml.v2",
+			"vcs": "git",
+			"revision": "a3f3340b5840cee44f372bddb5880fcbc419b46a",
+			"branch": "v2",
+			"notests": true
+		}
+	]
+}

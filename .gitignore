@@ -22,3 +22,8 @@ _testmain.go
 *.exe
 *.test
 *.prof
+methodical-monkey
+entrypoint/methodical-monkey
+go-methodical-monkey
+entrypoint/go-methodical-monkey
+dist
