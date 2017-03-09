@@ -6,10 +6,12 @@ import (
 	"os"
 	"os/signal"
 	"syscall"
+	"time"
 
 	mgo "gopkg.in/mgo.v2"
 
 	"github.com/aws/aws-sdk-go/aws"
+	"github.com/aws/aws-sdk-go/aws/credentials"
 	"github.com/aws/aws-sdk-go/aws/session"
 	"github.com/aws/aws-sdk-go/service/ec2"
 	"github.com/coreos/go-semver/semver"
@@ -32,8 +34,9 @@ func main() {
 
 func run(context *cli.Context) {
 	svc := connectEC2()
-	db := connectMongo("mongodb://localhost:27017", "methodical-monkey")
-	monkeyClient := monkey.NewClient(db)
+	db := connectMongo()
+	delay := time.Second * 30
+	monkeyClient := monkey.NewClient(db, delay)
 	sigTerm := make(chan os.Signal)
 	signal.Notify(sigTerm, syscall.SIGTERM)
 
@@ -60,7 +63,6 @@ func run(context *cli.Context) {
 		if err != nil {
 			panic(err)
 		}
-		// time.Sleep(60 * time.Second)
 		os.Exit(0)
 	}
 }
@@ -70,16 +72,28 @@ func connectEC2() *ec2.EC2 {
 	if err != nil {
 		panic(err)
 	}
-	svc := ec2.New(sess, &aws.Config{Region: aws.String("us-west-2")})
+	region := os.Getenv("AWS_DEFAULT_REGION")
+	if region == "" {
+		region = "us-west-2"
+	}
+	svc := ec2.New(sess, &aws.Config{
+		Credentials: credentials.NewEnvCredentials(),
+		Region:      aws.String(region),
+	})
 	return svc
 }
 
-func connectMongo(url, db string) *mgo.Database {
-	session, err := mgo.Dial(url)
+func connectMongo() *mgo.Database {
+	mongoDbURI := os.Getenv("MONGODB_URI")
+	debug("got MONGODB_URI %v", mongoDbURI)
+	if mongoDbURI == "" {
+		log.Panicln("Missing required env MONGODB_URI")
+	}
+	session, err := mgo.Dial(mongoDbURI)
 	if err != nil {
 		panic(err)
 	}
-	return session.DB(db)
+	return session.DB("")
 }
 
 func version() string {

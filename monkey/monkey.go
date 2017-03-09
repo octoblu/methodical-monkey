@@ -13,7 +13,8 @@ var debug = De.Debug("methodical-monkey:monkey")
 
 // Client represents the Methodical Monkey client
 type Client struct {
-	db *mgo.Database
+	db    *mgo.Database
+	delay time.Duration
 }
 
 // Machine represents the machine database document
@@ -23,8 +24,8 @@ type Machine struct {
 }
 
 // NewClient constructs a new instance Methodical Monkey
-func NewClient(db *mgo.Database) *Client {
-	return &Client{db: db}
+func NewClient(db *mgo.Database, delay time.Duration) *Client {
+	return &Client{db: db, delay: delay}
 }
 
 // Process finds servers to shutdown
@@ -35,8 +36,8 @@ func (client *Client) Process(list []*servers.Server) error {
 		if err != nil {
 			return err
 		}
-		debug("one is done")
-		return nil
+		debug("sleep for %v", client.delay.String())
+		time.Sleep(client.delay)
 	}
 	debug("it has been done")
 	return err
