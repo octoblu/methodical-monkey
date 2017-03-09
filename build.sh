@@ -2,45 +2,50 @@
 
 APP_NAME=methodical-monkey
 TMP_DIR="/tmp/$APP_NAME-build"
-IMAGE_NAME=local/$APP_NAME
+IMAGE_NAME="local/$APP_NAME"
 
 init() {
-  rm -rf $TMP_DIR/ && \
-    mkdir -p $TMP_DIR/
+  rm -rf $TMP_DIR && \
+    mkdir -p $TMP_DIR
 }
 
 build() {
-  docker build --tag $IMAGE_NAME:built .
+  docker build --tag "$IMAGE_NAME:built" .
 }
 
 run() {
   docker run --rm \
-    --volume $TMP_DIR:/export/ \
-    $IMAGE_NAME:built \
-      cp $APP_NAME /export
+    --volume "$TMP_DIR:/export/" \
+    "$IMAGE_NAME:built" \
+      cp "$APP_NAME" /export
 }
 
 copy() {
-  cp $TMP_DIR/$APP_NAME .
-  cp $TMP_DIR/$APP_NAME entrypoint/
+  cp "$TMP_DIR/$APP_NAME" .
+  cp "$TMP_DIR/$APP_NAME" entrypoint/
 }
 
 package() {
-  docker build --tag $IMAGE_NAME:latest entrypoint
+  local tag="$1"
+  docker build --tag "$IMAGE_NAME:$tag" entrypoint
 }
 
-panic() {
-  local message=$1
-  echo $message
+fatal() {
+  local message="$1"
+  echo "$message"
   exit 1
 }
 
 main() {
-  init    || panic "init failed"
-  build   || panic "build failed"
-  run     || panic "run failed"
-  copy    || panic "copy failed"
-  package || panic "package failed"
+  local tag="$1"
+  if [ -z "$tag" ]; then
+    tag="latest"
+  fi
+  init    || fatal "init failed"
+  build   || fatal "build failed"
+  run     || fatal "run failed"
+  copy    || fatal "copy failed"
+  package "$tag" || fatal "package failed"
 }
 
-main
+main "$@"

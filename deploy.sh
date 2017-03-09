@@ -1,28 +1,24 @@
 #!/bin/bash
 
 APP_NAME=methodical-monkey
-LOCAL_IMAGE_NAME=local/$APP_NAME
-REMOTE_IMAGE_NAME=octoblu/$APP_NAME
+LOCAL_IMAGE_NAME="local/$APP_NAME"
+REMOTE_IMAGE_NAME="octoblu/$APP_NAME"
 
-panic() {
+fatal() {
   local message=$1
-  echo $message
+  echo "$message"
   exit 1
 }
 
 main() {
-  local tag="$(git describe --tags --exact --match 'v*.*.*')"
-  if [ -n "$BUILD_TAG" ]; then
-    echo "Using $BUILD_TAG tag"
-    tag="$BUILD_TAG"
+  local tag="$1"
+  if [ -z "$tag" ]; then
+    fatal "Missing tag as first argument"
   fi
-  if [ "$?" != "0" ]; then
-    panic 'not a tagged commit'
-  fi
-  ./build.sh || panic 'build failed'
-  echo "building tag $tag"
-  docker tag $LOCAL_IMAGE_NAME:latest $REMOTE_IMAGE_NAME:$tag
-  docker push $REMOTE_IMAGE_NAME:$tag
+  echo "building $LOCAL_IMAGE_NAME:$tag"
+  ./build.sh "$tag" || fatal 'build failed'
+  echo "pushing $LOCAL_IMAGE_NAME:$tag -> $REMOTE_IMAGE_NAME:$tag"
+  docker push "$REMOTE_IMAGE_NAME:$tag" || fatal 'failed to push'
 }
 
-main
+main "$@"
