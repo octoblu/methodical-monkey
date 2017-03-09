@@ -13,7 +13,7 @@ func List(svc *ec2.EC2) ([]*Server, error) {
 	}
 	for _, reservation := range result.Reservations {
 		for _, instance := range reservation.Instances {
-			instances = append(instances, NewServer(instance))
+			instances = append(instances, NewServer(instance, svc))
 		}
 	}
 	return instances, nil

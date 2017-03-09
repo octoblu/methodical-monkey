@@ -6,7 +6,6 @@ import (
 	"os"
 	"os/signal"
 	"syscall"
-	"time"
 
 	mgo "gopkg.in/mgo.v2"
 
@@ -34,7 +33,7 @@ func main() {
 func run(context *cli.Context) {
 	svc := connectEC2()
 	db := connectMongo("mongodb://localhost:27017", "methodical-monkey")
-	monkeyClient := monkey.NewMonkeyClient(db)
+	monkeyClient := monkey.NewClient(db)
 	sigTerm := make(chan os.Signal)
 	signal.Notify(sigTerm, syscall.SIGTERM)
 
@@ -57,8 +56,12 @@ func run(context *cli.Context) {
 		if err != nil {
 			panic(err)
 		}
-		monkeyClient.Process(list)
-		time.Sleep(60 * time.Second)
+		err = monkeyClient.Process(list)
+		if err != nil {
+			panic(err)
+		}
+		// time.Sleep(60 * time.Second)
+		os.Exit(0)
 	}
 }
 
