@@ -55,14 +55,12 @@ func (client *Client) ProcessMachine(server *servers.Server) error {
 	if err != nil {
 		return err
 	}
-	if shouldReboot {
-		debug("i should reboot")
-	} else {
+	if !shouldReboot {
 		debug("i should not reboot")
+		return nil
 	}
-	debug("i am going to anyways")
+	debug("i am going to reboot")
 	return client.rebootMachine(server)
-	// return err
 }
 
 func (client *Client) storeMachine(server *servers.Server) error {
@@ -87,6 +85,10 @@ func (client *Client) shouldRebootMachine(server *servers.Server) (bool, error) 
 	}
 	if time.Since(machine.RebootedAt) < time.Hour {
 		debug("no need to reboot %v", server.GetName())
+		return false, nil
+	}
+	if time.Since(server.GetLaunchTime()) < time.Hour {
+		debug("I am newby server, skip me")
 		return false, nil
 	}
 	return true, nil

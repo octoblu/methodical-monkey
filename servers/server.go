@@ -2,14 +2,12 @@ package servers
 
 import (
 	"fmt"
+	"time"
 
 	"github.com/aws/aws-sdk-go/aws"
 	"github.com/aws/aws-sdk-go/aws/awserr"
 	"github.com/aws/aws-sdk-go/service/ec2"
-	De "github.com/visionmedia/go-debug"
 )
-
-var debug = De.Debug("methodical-monkey:server")
 
 // Server represents our instance of a server
 type Server struct {
@@ -37,6 +35,11 @@ func (server *Server) GetName() string {
 		}
 	}
 	return fmt.Sprint(name)
+}
+
+// GetLaunchTime get the time at which the server was launched
+func (server *Server) GetLaunchTime() time.Time {
+	return *server.instance.LaunchTime
 }
 
 // Reboot will reboot the machine
