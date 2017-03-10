@@ -1,10 +1,13 @@
 package main
 
 import (
+	"crypto/tls"
 	"fmt"
 	"log"
+	"net"
 	"os"
 	"os/signal"
+	"strings"
 	"syscall"
 	"time"
 
@@ -34,9 +37,12 @@ func main() {
 
 func run(context *cli.Context) {
 	svc := connectEC2()
-	db := connectMongo()
+	dbsess := connectMongo()
+	debug("connected")
+	defer dbsess.Close()
+
 	delay := time.Second * 30
-	monkeyClient := monkey.NewClient(db, delay)
+	monkeyClient := monkey.NewClient(dbsess.DB(""), delay)
 	sigTerm := make(chan os.Signal)
 	signal.Notify(sigTerm, syscall.SIGTERM)
 
@@ -62,7 +68,8 @@ func run(context *cli.Context) {
 		if err != nil {
 			panic(err)
 		}
-		os.Exit(0)
+		debug("sleeping for 10m")
+		time.Sleep(time.Minute * 10)
 	}
 }
 
@@ -82,17 +89,46 @@ func connectEC2() *ec2.EC2 {
 	return svc
 }
 
-func connectMongo() *mgo.Database {
-	mongoDbURI := os.Getenv("MONGODB_URI")
-	debug("got MONGODB_URI %v", mongoDbURI)
-	if mongoDbURI == "" {
+func connectMongo() *mgo.Session {
+	uri := os.Getenv("MONGODB_URI")
+	if uri == "" {
 		log.Panicln("Missing required env MONGODB_URI")
 	}
-	session, err := mgo.Dial(mongoDbURI)
+	if strings.Contains(uri, "ssl=true") {
+		return connectSecureMongo(uri)
+	}
+	return connectInsecureMongo(uri)
+}
+
+func connectSecureMongo(uri string) *mgo.Session {
+	uri = strings.TrimSuffix(uri, "ssl=true")
+	uri = strings.TrimSuffix(uri, "?")
+	debug("connecting to secure mongo %v", uri)
+	tlsConfig := &tls.Config{}
+	tlsConfig.InsecureSkipVerify = true
+
+	dialInfo, err := mgo.ParseURL(uri)
 	if err != nil {
 		panic(err)
 	}
-	return session.DB("")
+	dialInfo.DialServer = func(addr *mgo.ServerAddr) (net.Conn, error) {
+		conn, dialerr := tls.Dial("tcp", addr.String(), tlsConfig)
+		return conn, dialerr
+	}
+	sess, err := mgo.DialWithInfo(dialInfo)
+	if err != nil {
+		panic(err)
+	}
+	return sess
+}
+
+func connectInsecureMongo(uri string) *mgo.Session {
+	debug("connecting to insecure mongo %v", uri)
+	sess, err := mgo.Dial(uri)
+	if err != nil {
+		panic(err)
+	}
+	return sess
 }
 
 func version() string {
