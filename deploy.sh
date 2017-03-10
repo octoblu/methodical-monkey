@@ -17,7 +17,9 @@ main() {
   fi
   echo "building $LOCAL_IMAGE_NAME:$tag"
   ./build.sh "$tag" || fatal 'build failed'
-  echo "pushing $LOCAL_IMAGE_NAME:$tag -> $REMOTE_IMAGE_NAME:$tag"
+  echo "tagging $LOCAL_IMAGE_NAME:$tag -> $REMOTE_IMAGE_NAME:$tag"
+  docker tag "$LOCAL_IMAGE_NAME:$tag" "$REMOTE_IMAGE_NAME:$tag" || fatal 'failed to tag'
+  echo "pushing $REMOTE_IMAGE_NAME:$tag"
   docker push "$REMOTE_IMAGE_NAME:$tag" || fatal 'failed to push'
 }
 
