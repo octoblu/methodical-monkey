@@ -54,7 +54,6 @@ func run(context *cli.Context) {
 			os.Exit(0)
 		}
 
-		debug("methodical-monkey.loop")
 		list, err := servers.List(svc)
 		if err != nil {
 			panic(err)

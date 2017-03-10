@@ -1,6 +1,9 @@
 package servers
 
 import (
+	"math/rand"
+	"time"
+
 	"github.com/aws/aws-sdk-go/aws"
 	"github.com/aws/aws-sdk-go/service/ec2"
 	De "github.com/visionmedia/go-debug"
@@ -29,9 +32,22 @@ func List(svc *ec2.EC2) ([]*Server, error) {
 	}
 	for _, reservation := range result.Reservations {
 		for _, instance := range reservation.Instances {
-			instances = append(instances, NewServer(instance, svc))
+			if instance != nil {
+				instances = append(instances, NewServer(instance, svc))
+			}
 		}
 	}
+	instances = shuffle(instances)
 	debug("found %v instances", len(instances))
 	return instances, nil
+}
+
+func shuffle(servers []*Server) []*Server {
+	rand.Seed(int64(time.Now().Nanosecond()))
+	newServers := make([]*Server, len(servers))
+	for i, server := range servers {
+		v := rand.Intn(i + 1)
+		newServers[v] = server
+	}
+	return newServers
 }
