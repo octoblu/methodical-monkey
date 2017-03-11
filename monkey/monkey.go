@@ -84,11 +84,12 @@ func (client *Client) shouldRebootMachine(server *servers.Server) (bool, error) 
 	if err != nil {
 		return false, err
 	}
-	if time.Since(machine.RebootedAt) < time.Hour {
+	timeWindow := time.Hour * 2
+	if time.Since(machine.RebootedAt) < timeWindow {
 		debug("no need to reboot %v", server.GetName())
 		return false, nil
 	}
-	if time.Since(server.GetLaunchTime()) < time.Hour {
+	if time.Since(server.GetLaunchTime()) < timeWindow {
 		debug("I am newby server, skip me")
 		return false, nil
 	}

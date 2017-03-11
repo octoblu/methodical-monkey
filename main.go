@@ -41,7 +41,7 @@ func run(context *cli.Context) {
 	debug("connected")
 	defer dbsess.Close()
 
-	delay := time.Second * 30
+	delay := time.Minute
 	monkeyClient := monkey.NewClient(dbsess.DB(""), delay)
 	sigTerm := make(chan os.Signal)
 	signal.Notify(sigTerm, syscall.SIGTERM)
@@ -68,8 +68,8 @@ func run(context *cli.Context) {
 		if err != nil {
 			panic(err)
 		}
-		debug("sleeping for 10m")
-		time.Sleep(time.Minute * 10)
+		debug("sleeping for 30m")
+		time.Sleep(time.Minute * 30)
 	}
 }
 
