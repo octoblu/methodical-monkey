@@ -41,7 +41,7 @@ func run(context *cli.Context) {
 	debug("connected")
 	defer dbsess.Close()
 
-	delay := time.Minute
+	delay := (time.Minute * 5)
 	monkeyClient := monkey.NewClient(dbsess.DB(""), delay)
 	sigTerm := make(chan os.Signal)
 	signal.Notify(sigTerm, syscall.SIGTERM)
